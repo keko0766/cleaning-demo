@@ -202,3 +202,12 @@ footer{background:var(--green);color:#b5cfc9;padding:28px 0;font-size:.9rem}
   .trust-grid,.steps{grid-template-columns:1fr}
   .mini{padding:18px}
 }
+
+/* form -> WhatsApp */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dl span{display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px}
+input[type=date],input[type=number]{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font:inherit;background:#fff;color:var(--ink)}
+.area-in{position:relative}
+.area-in span{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+#form .btn-wa{width:100%;padding:15px}
+@media(max-width:560px){.two{grid-template-columns:1fr}}

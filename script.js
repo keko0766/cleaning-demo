@@ -49,8 +49,8 @@ const KK = {
   k_h:"10 минутта қоңырау шаламыз",k_p:"Телефон қалдырыңыз, менеджер бағаны және ыңғайлы уақытты растайды.",
   k1:"Күн сайын 8:00-ден 22:00-ге дейін",k2t:"Алматы",k2:"Үлгі көшесі, 1 (демо мекенжай)",k3:"Бір сағат ішінде жауап береміз",
   k_calc:"Сіздің есебіңіз:",ph_phone:"Телефоныңыз, +7",ph_name:"Аты (міндетті емес)",
-  send:"Маған қоңырау шалыңыз",fine:"Батырманы басу арқылы деректерді өңдеуге келісесіз.",
-  ok:"Рахмет! Бұл демо сайт: өтінім ешқайда жіберілмейді.",demo:"Демонстрациялық сайт",call:"Қоңырау шалу"
+  send:"WhatsApp-қа жазу",fine:"WhatsApp дайын хабарламамен ашылады, «Жіберу» батырмасын басу жеткілікті.",
+  ok:"WhatsApp ашылуда. Ашылмаса, батырманы қайта басыңыз.",ph_addr:"Мекенжай: көше, үй, пәтер",ph_date:"Жинау күні",ph_time:"Ыңғайлы уақыт",ph_time_e:"мысалы, 14:00-ден кейін",demo:"Демонстрациялық сайт",call:"Қоңырау шалу"
 };
 const TITLE = {ru:document.title,kk:"Алматыдағы клининг — жинау 550 ₸/м²-ден | Таза Үй"};
 const DESC  = {ru:document.querySelector('meta[name=description]').content,kk:"Алматыда пәтер, кеңсе және үйлерді кәсіби жинау. Баға келгенге дейін бекітіледі, 550 ₸/м²-ден. Алғашқы тапсырысқа 15% жеңілдік."};
@@ -74,6 +74,8 @@ function setLang(l){
   document.title = TITLE[l];
   document.querySelector('meta[name=description]').content = DESC[l];
   document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('on',b.dataset.lang===l));
+  const ft=document.getElementById('ftype'),tp=document.getElementById('type');
+  if(ft) [...ft.options].forEach((o,i)=>o.textContent=tp.options[i].textContent);
   try{localStorage.setItem('lang',l)}catch(e){}
 }
 document.querySelectorAll('.lang button').forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
@@ -86,6 +88,7 @@ document.getElementById('burger').onclick=()=>menu.classList.toggle('open');
 menu.querySelectorAll('a').forEach(a=>a.onclick=()=>menu.classList.remove('open'));
 
 // калькулятор (скидка 15% на первый заказ)
+const WA='77007392350';
 const type=document.getElementById('type'),area=document.getElementById('area'),
       areaV=document.getElementById('areaV'),sum=document.getElementById('sum'),
       old=document.getElementById('old'),chip=document.getElementById('chipSum');
@@ -94,8 +97,13 @@ function calc(){
   const full=(+type.value)*(+area.value), disc=full*0.85;
   areaV.textContent=area.value;
   old.textContent=fmt(full); sum.textContent=fmt(disc); chip.textContent=fmt(disc);
+  ftype.value=type.value; if(document.activeElement!==farea) farea.value=area.value;
 }
+const ftype=document.getElementById('ftype'),farea=document.getElementById('farea');
+type.querySelectorAll('option').forEach(o=>{const c=document.createElement('option');c.value=o.value;c.textContent=o.textContent;ftype.appendChild(c);});
 [type,area].forEach(e=>e.addEventListener('input',calc));
+ftype.addEventListener('input',()=>{type.value=ftype.value;calc();});
+farea.addEventListener('input',()=>{const v=Math.min(300,Math.max(20,+farea.value||20));area.value=v;calc();});
 calc();
 
 // до/после
@@ -105,9 +113,23 @@ baR.addEventListener('input',()=>{
   baH.style.left=baR.value+'%';
 });
 
-// форма (демо)
+// форма -> WhatsApp с готовым сообщением
+const MSG={
+  ru:{hi:'Здравствуйте! Хочу заказать уборку.',type:'Тип',calc:'Расчёт',disc:'скидка 15% на первый заказ',addr:'Адрес',date:'Дата',time:'Время',name:'Имя',phone:'Телефон'},
+  kk:{hi:'Сәлеметсіз бе! Жинауға тапсырыс бергім келеді.',type:'Түрі',calc:'Есеп',disc:'алғашқы тапсырысқа 15% жеңілдік',addr:'Мекенжай',date:'Күні',time:'Уақыты',name:'Аты',phone:'Телефон'}
+};
 document.getElementById('form').addEventListener('submit',e=>{
   e.preventDefault();
+  const m=MSG[document.documentElement.lang==='kk'?'kk':'ru'], v=id=>document.getElementById(id).value.trim();
+  const opt=type.options[type.selectedIndex].textContent;
+  const lines=[m.hi,
+    `${m.type}: ${opt}, ${area.value} м²`,
+    `${m.calc}: ${sum.textContent} (${m.disc})`,
+    `${m.addr}: ${v('fa')}`];
+  const d=v('fd'); if(d){const [y,mo,da]=d.split('-'); lines.push(`${m.date}: ${da}.${mo}.${y}`);}
+  if(v('ft')) lines.push(`${m.time}: ${v('ft')}`);
+  if(v('fn')) lines.push(`${m.name}: ${v('fn')}`);
+  lines.push(`${m.phone}: ${v('fp')}`);
   document.getElementById('ok').style.display='block';
-  e.target.reset();
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(lines.join('\n'))}`,'_blank');
 });

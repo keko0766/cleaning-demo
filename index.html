@@ -88,7 +88,7 @@
               <option value="500" data-i18n="s4t">Уборка офиса</option>
             </select></div>
           <div><label for="area"><span data-i18n="c_area">Площадь</span>: <b id="areaV">60</b> м²</label>
-            <input type="range" id="area" min="20" max="300" step="5" value="60"></div>
+            <input type="range" id="area" min="20" max="300" step="1" value="60"></div>
         </div>
         <div class="res">
           <div><s id="old">39 600 ₸</s><strong id="sum">33 660 ₸</strong></div>
@@ -250,11 +250,22 @@
     </div>
     <form id="form">
       <div class="chip"><span data-i18n="k_calc">Ваш расчёт:</span> <b id="chipSum">33 660 ₸</b></div>
-      <input type="tel" id="fp" required data-i18n-ph="ph_phone" placeholder="Ваш телефон, +7">
-      <input type="text" id="fn" data-i18n-ph="ph_name" placeholder="Имя (необязательно)">
-      <button class="btn btn-y" type="submit" data-i18n="send">Перезвоните мне</button>
-      <p class="fine" data-i18n="fine">Нажимая кнопку, вы соглашаетесь на обработку данных.</p>
-      <div class="ok" id="ok" data-i18n="ok">Спасибо! Это демо-сайт: заявка никуда не отправляется.</div>
+      <div class="two">
+        <select id="ftype" aria-label="Тип уборки"></select>
+        <div class="area-in"><input type="number" id="farea" min="20" max="300" value="60" aria-label="Площадь"><span>м²</span></div>
+      </div>
+      <input type="text" id="fa" required data-i18n-ph="ph_addr" placeholder="Адрес: улица, дом, квартира" autocomplete="street-address">
+      <div class="two">
+        <label class="dl"><span data-i18n="ph_date">Дата уборки</span><input type="date" id="fd"></label>
+        <label class="dl"><span data-i18n="ph_time">Удобное время</span><input type="text" id="ft" data-i18n-ph="ph_time_e" placeholder="например, после 14:00"></label>
+      </div>
+      <div class="two">
+        <input type="text" id="fn" data-i18n-ph="ph_name" placeholder="Имя (необязательно)" autocomplete="name">
+        <input type="tel" id="fp" required data-i18n-ph="ph_phone" placeholder="Ваш телефон, +7" autocomplete="tel">
+      </div>
+      <button class="btn btn-wa" type="submit"><svg class="i"><use href="#i-chat"/></svg><span data-i18n="send">Написать в WhatsApp</span></button>
+      <p class="fine" data-i18n="fine">Откроется WhatsApp с готовым сообщением, останется нажать «Отправить».</p>
+      <div class="ok" id="ok" data-i18n="ok">Открываем WhatsApp. Если он не открылся, нажмите кнопку ещё раз.</div>
     </form>
   </div>
 </section>
